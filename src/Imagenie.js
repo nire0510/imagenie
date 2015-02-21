@@ -169,8 +169,8 @@
     };
 
     /**
-     * Gets image dimension (x, y)
-     * @returns [{src: {string}, width: {number}, height: {number}}] Width, height and source of image(s)
+     * Gets image(s) dimension
+     * @returns [{src: {string}, displayWidth: {number}, displayHeight: {number}, naturalWidth: {number}, naturalHeight: {number}}] Width, height and source of image(s)
      */
     Imagenie.prototype.size = function () {
       return _images.map(function (objImage) {
@@ -196,17 +196,17 @@
           var arrData = _getImageDataArray(objImage.elem);
 
           return {
-            r: arrData[((objImage.elem.width * intY) + intX) * 4],
-            g: arrData[((objImage.elem.width * intY) + intX) * 4 + 1],
-            b: arrData[((objImage.elem.width * intY) + intX) * 4 + 2],
-            a: arrData[((objImage.elem.width * intY) + intX) * 4 + 3]
+            R: arrData[((objImage.elem.width * intY) + intX) * 4],
+            G: arrData[((objImage.elem.width * intY) + intX) * 4 + 1],
+            B: arrData[((objImage.elem.width * intY) + intX) * 4 + 2],
+            A: arrData[((objImage.elem.width * intY) + intX) * 4 + 3]
           }
         });
       }
     };
 
     /**
-     * Checks if image contains alpha chanel
+     * Checks if image contains alpha channel
      * @returns [{boolean}] Transparency flag of image(s), true if it contains transparency, false otherwise
      */
     Imagenie.prototype.transparency = function () {
@@ -226,11 +226,11 @@
     };
 
     /**
-     * Crops an image
+     * Crops image(s)
      * @param {number} intX The x coordinate where to start clipping
      * @param {number} intY The y coordinate where to start clipping
-     * @param {number} intWidth The width of the clipped image
-     * @param {number} intHeight The height of the clipped image
+     * @param {number} intWidth How many pixels to take horizontally
+     * @param {number} intHeight How many pixels to take vertically
      * @returns {Imagenie} for chainability
      */
     Imagenie.prototype.crop = function (intX, intY, intWidth, intHeight) {
@@ -247,9 +247,9 @@
     };
 
     /**
-     * Adds opacity to all pixels in picture
+     * Sets alpha channel to all pixels in image
      * @param {number} dcmOpacity Opacity level from 0 to 1
-     * @param {boolean} blnIgnoreTransparent If set to true, transparent pixels opacity won't be overwritten
+     * @param {boolean} blnIgnoreTransparent When set to true, fully transparent pixels opacity won't be overwritten
      * @returns {Imagenie} for chainability
      */
     Imagenie.prototype.alpha = function (dcmOpacity, blnIgnoreTransparent) {
@@ -266,14 +266,14 @@
 
     /**
      * Scales image (preserves ratio)
-     * @param {number} dcmScale Scaling degree greater than 0
+     * @param {number} dcmFactor Scaling factor greater than 0
      * @returns {Imagenie} for chainability
      */
-    Imagenie.prototype.scale = function (dcmScale) {
-      if (dcmScale > 0) {
+    Imagenie.prototype.scale = function (dcmFactor) {
+      if (dcmFactor > 0) {
         _images.forEach(function (objImage) {
           // Draw image on canvas:
-          Canvas.drawImage(objImage.elem, 0, 0, objImage.elem.width * Math.max(0, dcmScale), objImage.elem.height * Math.max(0, dcmScale));
+          Canvas.drawImage(objImage.elem, 0, 0, objImage.elem.width * Math.max(0, dcmFactor), objImage.elem.height * Math.max(0, dcmFactor));
           // Update image:
           objImage.elem.src = Canvas.canvas.toDataURL();
         });
@@ -295,7 +295,7 @@
     };
 
     /**
-     * Converts image colors to Grayscale
+     * Converts image(s) colors to Grayscale
      * @returns {Imagenie} for chainability
      */
     Imagenie.prototype.grayscale = function () {
@@ -419,7 +419,7 @@
     };
 
     /**
-     * Swap one color to another
+     * Swaps one color to another in image(s)
      * @param {r,g,b,a} objFromColor RGBA value to search for. Notice that you don't have to specify all properties
      * @param {r,g,b,a} objToColor RGBA value to replace with
      * @returns {Imagenie} for chainability
@@ -431,9 +431,9 @@
             (!objFromColor.g || objFromColor.g === arrPixel[i + 1]) &&
             (!objFromColor.b || objFromColor.b === arrPixel[i + 2]) &&
             (!objFromColor.a || objFromColor.a === arrPixel[i + 3])) {
-            ['r', 'g', 'b', 'a'].forEach(function (chanel, index) {
-              if (objToColor.hasOwnProperty(chanel)) {
-                arrPixel[i + index] = objToColor[chanel];
+            ['r', 'g', 'b', 'a'].forEach(function (channel, index) {
+              if (objToColor.hasOwnProperty(channel)) {
+                arrPixel[i + index] = objToColor[channel];
               }
             });
           }
