@@ -21,7 +21,7 @@ Imagenie can either query images for some information, such as size or transpare
 To keep samples simple, let's assume that we have a variable `ig` which is an instance of the following command `new Imagenie(document.getElementById('myImage'));`
 
 ### Query images
-* `pixel(intX, intY)` - Gets image(s) pixel RGBA values in specific location.  
+* **`pixel(intX, intY)`** - Gets image(s) pixel RGBA values in specific location.
   * intX {integer: 0<=} X coordinate
   * intY {integer: 0<=} Y coordinate
 
@@ -36,7 +36,7 @@ To keep samples simple, let's assume that we have a variable `ig` which is an in
   var color = ig.pixel(120, 150); // => [{R: 0, G: 255, B: 0, A: 255}]
   ```
 
-* `size()` - Gets image(s) dimension.  
+* **`size()`** - Gets image(s) dimension.
 Returns array of objects, one per image:
   * src {string} - image path
   * displayWidth {integer} - image width as seen in web page
@@ -58,7 +58,7 @@ Returns array of objects, one per image:
   */
   ```
 
-* `transparency()` - Checks if image contains alpha channel.  
+* **`transparency()`** - Checks if image contains alpha channel.
 Returns array of booleans, one per image: **true** if image contains alpha channel (has transparent areas), **false** otherwise
   Sample:
   ```javascript
