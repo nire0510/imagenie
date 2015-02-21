@@ -209,7 +209,7 @@
      * Checks if image contains alpha chanel
      * @returns [{boolean}] Transparency flag of image(s), true if it contains transparency, false otherwise
      */
-    Imagenie.prototype.hasTransparency = function () {
+    Imagenie.prototype.transparency = function () {
       return _images.map(function (objImage) {
         var arrData = _getImageDataArray(objImage);
 
@@ -252,7 +252,7 @@
      * @param {boolean} blnIgnoreTransparent If set to true, transparent pixels opacity won't be overwritten
      * @returns {Imagenie} for chainability
      */
-    Imagenie.prototype.opacity = function (dcmOpacity, blnIgnoreTransparent) {
+    Imagenie.prototype.alpha = function (dcmOpacity, blnIgnoreTransparent) {
       if (dcmOpacity >= 0 && dcmOpacity <= 1) {
         _manipulatePixel(function (arrPixel, i) {
           if (!blnIgnoreTransparent || arrPixel[i + 3] > 0) {
