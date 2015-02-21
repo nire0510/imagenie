@@ -4,10 +4,11 @@ Imagenie is a JavaScript library which helps web developers and designers to man
 images in web pages easily and directly, without having to edit it offline with graphic design softwares.
 
 ## Installation
-To get going with Imagenie:
-1. Install via bower: bower install imagenie --save
+To get going with Imagenie:  
+1. Install via bower:  
+  `bower install imagenie --save`  
 2. Add imagenie.min.js to your web page:  
-`<script src="bower_components/imagenie/dist/imagenie.min.js"></script>`
+  `<script src="bower_components/imagenie/dist/imagenie.min.js"></script>`
 
 ## Quick start
 The first thing to do is to tell Imagenie which images you want to edit or query (you can either select a single element or multiple elements to work on simultaneously).  This can be done by creating a new instance of Imagenie, which its argument could be on of the following:
