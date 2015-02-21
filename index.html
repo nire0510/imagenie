@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Imagenie by nire0510</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Imagenie</h1>
+          <h2>Image manipulation made easy! (JavaScript library)</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/nire0510/imagenie/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/nire0510/imagenie/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/nire0510/imagenie" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a id="imagenie---image-manipulation-made-easy" class="anchor" href="#imagenie---image-manipulation-made-easy" aria-hidden="true"><span class="octicon octicon-link"></span></a>Imagenie - Image manipulation made easy!</h1>
+
+<p>Imagenie is a JavaScript library which helps web developers and designers to manipulate or explore
+images in web pages easily and directly, without having to edit it offline with graphic design softwares.</p>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>To get going with Imagenie:
+1. Install via bower: bower install imagenie --save
+2. Add imagenie.min.js to your web page:<br>
+<code>&lt;script src="bower_components/imagenie/dist/imagenie.min.js"&gt;&lt;/script&gt;</code></p>
+
+<h2>
+<a id="quick-start" class="anchor" href="#quick-start" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quick start</h2>
+
+<p>The first thing to do is to tell Imagenie which images you want to edit or query (you can either select a single element or multiple elements to work on simultaneously).  This can be done by creating a new instance of Imagenie, which its argument could be on of the following:</p>
+
+<ul>
+<li>CSS selector:<br>
+<code>var ig = new Imagenie('.someSection img');</code>
+</li>
+<li>Element or a node list:<br>
+<code>var ig = new Imagenie(document.getElementById('myImage'));</code>
+</li>
+</ul>
+
+<h2>
+<a id="imagemin-commands" class="anchor" href="#imagemin-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>Imagemin commands</h2>
+
+<p>Imagenie can either query images for some information, such as size or transparency, or to manipulate images: resize it, swap one color with another, add alpha (opacity) channel or even crop it.<br>
+To keep samples simple, let's assume that we have a variable <code>ig</code> which is an instance of the following command <code>new Imagenie(document.getElementById('myImage'));</code></p>
+
+<h3>
+<a id="query-images" class="anchor" href="#query-images" aria-hidden="true"><span class="octicon octicon-link"></span></a>Query images</h3>
+
+<ul>
+<li>
+<p><strong><code>pixel(intX, intY)</code></strong> - Gets image(s) pixel RGBA values in specific location.</p>
+
+<ul>
+<li>intX {integer: 0&lt;=} X coordinate</li>
+<li>intY {integer: 0&lt;=} Y coordinate</li>
+</ul>
+
+<p>Returns array of objects, one per image:</p>
+
+<ul>
+<li>R {integer: 0-255} - red component value in pixel</li>
+<li>G {integer: 0-255} - green component value in pixel</li>
+<li>B {integer: 0-255} - blue component value in pixel</li>
+<li>A {integer: 0-255} - alpha (transparency) component value in pixel</li>
+</ul>
+
+<p>Sample:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> color <span class="pl-k">=</span> ig.pixel(<span class="pl-c1">120</span>, <span class="pl-c1">150</span>); <span class="pl-c">// =&gt; [{R: 0, G: 255, B: 0, A: 255}]</span></pre></div>
+</li>
+<li>
+<p><strong><code>size()</code></strong> - Gets image(s) dimension.
+Returns array of objects, one per image:</p>
+
+<ul>
+<li>src {string} - image path</li>
+<li>displayWidth {integer} - image width as seen in web page</li>
+<li>displayHeight {integer} - image height as seen in web page</li>
+<li>naturalWidth {integer} - original image width</li>
+<li>naturalHeight {integer} - original image height</li>
+</ul>
+
+<p>Sample:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> size <span class="pl-k">=</span> ig.<span class="pl-sc">size</span>();
+<span class="pl-c">/*</span>
+<span class="pl-c">=&gt; [{</span>
+<span class="pl-c">  src: 'http://www.somesite.com/images/myImage.png',</span>
+<span class="pl-c">  displayWidth: 200,</span>
+<span class="pl-c">  displayHeight: 200,</span>
+<span class="pl-c">  naturalWidth: 400,</span>
+<span class="pl-c">  naturalHeight: 400</span>
+<span class="pl-c">}]</span>
+<span class="pl-c">*/</span></pre></div>
+</li>
+<li>
+<p><strong><code>transparency()</code></strong> - Checks if image contains alpha channel.
+Returns array of booleans, one per image: <strong>true</strong> if image contains alpha channel (has transparent areas), <strong>false</strong> otherwise
+Sample:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-s">var</span> isTransparent <span class="pl-k">=</span> ig.transparency(); <span class="pl-c">// =&gt; [false]</span></pre></div>
+</li>
+</ul>
+
+<h3>
+<a id="manipulate-images" class="anchor" href="#manipulate-images" aria-hidden="true"><span class="octicon octicon-link"></span></a>Manipulate images</h3>
+
+<p>As mentioned above, Imagenie helps you also modify images on-the-fly; Images are immediately affected after execution. Also, notice that all commands in this section are chain-able, which means you can call few of them in a single call. Let's see those commands!</p>
+
+<ul>
+<li>
+<strong><code>reset()</code></strong> - Resets image to its original state. Useful when chaining few commands.</li>
+<li>
+<strong><code>invert()</code></strong> - Inverts image(s) colors.</li>
+<li>
+<strong><code>grayscale()</code></strong> - Converts image(s) colors to grayscale.</li>
+<li>
+<strong><code>alpha(dcmOpacity, blnIgnoreTransparent)</code></strong> - Sets alpha channel to all pixels in image(s).<br>
+
+<ul>
+<li>
+<code>dcmOpacity</code> {decimal: 0-1} - Opacity level</li>
+<li>
+<code>blnIgnoreTransparent</code> {boolean} - When set to true, fully transparent pixels opacity won't be overwritten</li>
+</ul>
+</li>
+<li>
+<strong><code>swap(objFromColor, objToColor)</code></strong> - Swaps one color to another in image(s).<br>
+
+<ul>
+<li>
+<code>objFromColor</code> {object: {r,g,b,a}} - RGBA value to search for. Notice that you don't have to specify all properties</li>
+<li>
+<code>objToColor</code> {object: {r,g,b,a}} - RGBA value to replace with</li>
+</ul>
+</li>
+<li>
+<strong><code>mirror()</code></strong> - Flips image(s) horizontally.</li>
+<li>
+<strong><code>rotate(intDegrees)</code></strong> - Rotates image(s)<br>
+
+<ul>
+<li>
+<code>intDegrees</code> {integer: 0-360} - The rotation angle in degrees</li>
+</ul>
+</li>
+<li>
+<strong><code>resize(intWidth, intHeight)</code></strong> - Resizes image(s).<br>
+
+<ul>
+<li>
+<code>intWidth</code> {number: 0&lt;} - Image new width</li>
+<li>
+<code>intHeight</code> {number: 0&lt;} - Image new height</li>
+</ul>
+</li>
+<li>
+<strong><code>scale(dcmFactor)</code></strong> - Scales image (preserves ratio).<br>
+
+<ul>
+<li>
+<code>dcmFactor</code> {decimal: 0&lt;} - Scaling factor</li>
+</ul>
+</li>
+<li>
+<strong><code>crop(intX, intY, intWidth, intHeight)</code></strong> - Crops image(s).<br>
+
+<ul>
+<li>
+<code>intX</code> {integer: 0&lt;} - X coordinate where to start clipping</li>
+<li>
+<code>intY</code> {integer: 0&lt;} - Y coordinate where to start clipping</li>
+<li>
+<code>intWidth</code> {integer: 0&lt;} - How many pixels to take horizontally</li>
+<li>
+<code>intHeight</code> {integer: 0&lt;} - How many pixels to take vertically</li>
+</ul>
+</li>
+</ul>
+        </section>
+
+        <footer>
+          Imagenie is maintained by <a href="https://github.com/nire0510">nire0510</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+                  <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-59986680-2");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+      </div>
+    </div>
+  </body>
+</html>
