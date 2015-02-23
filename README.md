@@ -11,11 +11,18 @@ To get going with Imagenie:
   `<script src="bower_components/imagenie/dist/imagenie.min.js"></script>`
 
 ## Quick start
-The first thing to do is to tell Imagenie which images you want to edit or query (you can either select a single element or multiple elements to work on simultaneously).  This can be done by creating a new instance of Imagenie, which its argument could be on of the following:
-* CSS selector:  
+The first thing to do is to tell Imagenie which images you want to edit or query. This can be done by creating a new instance of Imagenie, which its argument could be on of the following:
+* A CSS selector:
 `var ig = new Imagenie('.someSection img');`
-* Element or a node list:  
+* An element, HTML collection or a node list:
 `var ig = new Imagenie(document.getElementById('myImage'));`
+`var ig = new Imagenie(document.getElementsByTagName('img'));`
+`var ig = new Imagenie(document.querySelectorAll('#someSection img'));`
+* Or even a valid image URL, either relative or absolute:
+`var ig = new Imagenie('../images/myImage.png');`
+`var ig = new Imagenie('http://www.my.site.com/images/myImage.png');`
+Imagenie can receive as many arguments as you need which, by the way, can also be mix of the type above, for example:
+`var ig = new Imagenie('../images/myImage.png', document.images);`
 
 ## Imagemin commands
 Imagenie can either query images for some information, such as size or transparency, or to manipulate images: resize it, swap one color with another, add alpha (opacity) channel or even crop it.  
@@ -91,3 +98,9 @@ As mentioned above, Imagenie helps you also modify images on-the-fly; Images are
   * `intY` {integer: 0<} - Y coordinate where to start clipping
   * `intWidth` {integer: 0<} - How many pixels to take horizontally
   * `intHeight` {integer: 0<} - How many pixels to take vertically
+
+### Miscellaneous
+In this section you can find additional methods:
+* **`export()`** - Opens new browser tabs, one per input image, which display the image after applying formatting.
+* **`ready()`** - This methods acts like a promise, which expects 2 methods: a success callback in case all input images loaded successfully and an error callback in case at least one of the images failed to load.
+  This methods becomes handy especially when loading images

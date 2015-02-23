@@ -30,8 +30,22 @@
        * @param {string} strText Text to check
        * @returns {boolean} True if text is a valid URL, false otherwise
        */
-      isURL: function (strText) {
-        return strText.search(/^https?:\/\//) >= 0;
+      isValidURL: function (strText) {
+        return !!strText.match(/^https?:\/\/|\.(png|jpg|gif)$/);
+      },
+
+      /**
+       * Extends an existing object with other object
+       * @param {*} target The default object to extends
+       * @param {*} source The object with the new values
+       * @returns {*} Merged object
+       */
+      extend: function (target, source) {
+        var a = Object.create(target);
+        Object.keys(source).map(function (prop) {
+          prop in a && (a[prop] = source[prop]);
+        });
+        return a;
       }
     };
 
@@ -68,65 +82,122 @@
     };
     Canvas._init();
 
-    function Imagenie (input) {
+    function Imagenie () {
+      var that = this,
+        args = arguments;
+
+      _images = [];
+
       /**
        * Initialization function
        */
       (function init () {
-        // Check if images argument is a string ot an array:
-        if (typeof input === 'string') {
-          // Check if string is a URL:
-          if (Helper.isURL(input)) {
-            Helper.log('Image URL');
-            // TODO
-          }
-          // Check if string is an image(s) selector:
-          else if (document.querySelectorAll(input).length > 0) {
-            Helper.log('Image elements selector');
+        [].forEach.call(args, function (input) {
+          // Check if images argument is a string ot an array:
+          if (typeof input === 'string') {
+            // Check if string is a URL:
+            if (Helper.isValidURL(input)) {
+              Helper.log('Image URL');
+              _images.push(_loadImageURL.call(that, input));
+            }
+            // Check if string is an image(s) selector:
+            else if (document.querySelectorAll(input).length > 0) {
+              Helper.log('Image element selector');
 
-            [].forEach.call(document.querySelectorAll(input), function(elem) {
+              [].forEach.call(document.querySelectorAll(input), function(elem) {
+                if (elem.nodeName === 'IMG') {
+                  _images.push({
+                    elem: elem,
+                    src: elem.src,
+                    source: _getDataUrl(elem),
+                    complete: elem.complete
+                  });
+                }
+              });
+            }
+          }
+          // Check if argument is an array (could be an array of one of the two options above)
+          else if (input.constructor.name === 'NodeList' || input.constructor.name === 'HTMLCollection') {
+            Helper.log('Image nodes list');
+            [].forEach.call(input, function(elem) {
               if (elem.nodeName === 'IMG') {
-                elem.dataset.src = elem.src;
                 _images.push({
                   elem: elem,
-                  source: _getDataUrl(elem)
+                  source: _getDataUrl(elem),
+                  src: elem.src,
+                  complete: elem.complete
                 });
               }
             });
           }
-        }
-        // Check if argument is an array (could be an array of one of the two options above)
-        else if (Array.isArray(input)) {
-          Helper.log('Array of something');
-          // TODO
-        }
-        // Check if argument is an array (could be an array of one of the two options above)
-        else if (input.constructor.name === 'NodeList') {
-          Helper.log('Image elements collection');
-          [].forEach.call(input, function(elem) {
-            if (elem.nodeName === 'IMG') {
-              elem.dataset.src = elem.src;
-              _images.push({
-                elem: elem,
-                source: _getDataUrl(elem)
-              });
-            }
-          });
-        }
+        });
       })();
     }
 
     /**
+     * Load online image
+     * @param {string} strURL Image URL
+     * @returns {{elem: Image, source: string, src: string, complete: boolean}}
+     * @private
+     */
+    function _loadImageURL(strURL) {
+      var img = new Image(),
+        that = this,
+        obj = {
+          elem: img,
+          source: null,
+          src: strURL,
+          complete: false
+        };
+
+      img.addEventListener('load', function () {
+        obj.source = _getDataUrl(img);
+        obj.complete = img.complete;
+        _readySuccess.call(that);
+      });
+      img.addEventListener('error', function () {
+        obj.complete = false;
+        _readyError.call(that);
+      });
+
+      img.src = strURL;
+
+      return obj;
+    }
+
+    function _readyError() {
+      var blnSomeFailed = _images.some(function (elmImage) {
+        return elmImage.complete === false
+      });
+
+      if (blnSomeFailed && this.errorCallback && typeof this.errorCallback === 'function') {
+        this.errorCallback();
+        this.errorCallback = null;
+      }
+    }
+
+    function _readySuccess() {
+      var blnAllLoaded = _images.every(function (elmImage) {
+        return elmImage.complete === true
+      });
+
+      if (blnAllLoaded && this.successCallback && typeof this.successCallback === 'function') {
+        this.successCallback();
+        this.successCallback = null;
+      }
+    }
+
+    /**
      * Local shortcut to get image's data
-     * @param {HTMLElement} objImage Image element
+     * @param {HTMLElement} elmImage Image element
      * @returns {[number]} Array of pixels. Each pixel is represented by 4 values: RGBA
      * @private
      */
-    function _getImageDataArray (objImage) {
+    function _getImageDataArray (elmImage) {
       // Draw image on canvas:
-      Canvas.drawImage(objImage, 0, 0, objImage.width, objImage.height);
+      Canvas.drawImage(elmImage, 0, 0, elmImage.width, elmImage.height);
       // Get image data:
-      return Canvas.getImageData(0, 0, objImage.width, objImage.height).data;
+      return Canvas.getImageData(0, 0, elmImage.width, elmImage.height).data;
     }
 
     /**
@@ -135,7 +206,7 @@
      * @returns {string} Base64 representation of image data
      * @private
      */
-    function _getDataUrl (objImage, strType) {
+    function _getDataUrl (objImage) {
       // Draw image on canvas:
       Canvas.drawImage(objImage, 0, 0, objImage.width, objImage.height);
       // Get image data:
@@ -168,6 +239,24 @@
       });
     };
 
+    Imagenie.prototype.ready = function (successCallback, errorCallback) {
+      this.successCallback = typeof successCallback === 'function' && successCallback;
+      this.errorCallback = typeof errorCallback === 'function' && errorCallback;
+
+      _readyError.call(this);
+      _readySuccess.call(this);
+    };
+
+    /**
+     * Gets image(s) dimension
+     * @returns [{src: {string}, displayWidth: {number}, displayHeight: {number}, naturalWidth: {number}, naturalHeight: {number}}] Width, height and source of image(s)
+     */
+    Imagenie.prototype.export = function () {
+      _images.forEach(function (objImage) {
+        window.open(objImage.elem.src, objImage.src);
+      });
+    };
+
     /**
      * Gets image(s) dimension
      * @returns [{src: {string}, displayWidth: {number}, displayHeight: {number}, naturalWidth: {number}, naturalHeight: {number}}] Width, height and source of image(s)
@@ -175,7 +264,7 @@
     Imagenie.prototype.size = function () {
       return _images.map(function (objImage) {
         return {
-          src: objImage.elem.dataset.src,
+          src: objImage.src,
           displayWidth: objImage.elem.width,
           displayHeight: objImage.elem.height,
           naturalWidth: objImage.elem.naturalWidth,
