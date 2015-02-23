@@ -103,4 +103,18 @@ As mentioned above, Imagenie helps you also modify images on-the-fly; Images are
 In this section you can find additional methods:
 * **`export()`** - Opens new browser tabs, one per input image, which display the image after applying formatting.
 * **`ready()`** - This methods acts like a promise, which expects 2 methods: a success callback in case all input images loaded successfully and an error callback in case at least one of the images failed to load.
-  This methods becomes handy especially when loading images
+  This methods becomes handy especially when loading images from external source and not using an existing image element.
+  ```javascript
+    var ig = new Imagenie('../images/myImage.png', 'anotherImage.jpg');
+    
+    ig.ready(
+      function success () {
+        console.log('Good to go!');
+        ig.grayscale();
+      },
+      function error () {
+        console.log('Oh no! my images are broken!');
+      }
+    );
+    */
+    ```
