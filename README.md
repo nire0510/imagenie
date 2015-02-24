@@ -77,22 +77,40 @@ Returns array of booleans, one per image: **true** if image contains alpha chann
 As mentioned above, Imagenie helps you also modify images on-the-fly; Images are immediately affected after execution. Also, notice that all commands in this section are chain-able, which means you can call few of them in a single call. Let's see those commands!
 
 * **`reset()`** - Resets image to its original state. Useful when chaining few commands.
+
+
 * **`invert()`** - Inverts image(s) colors.
+
+
 * **`grayscale()`** - Converts image(s) colors to grayscale.
-* **`alpha(dcmOpacity, blnIgnoreTransparent)`** - Sets alpha channel to all pixels in image(s).  
+
+
+* **`alpha(dcmOpacity, blnIgnoreTransparent)`** - Sets alpha channel to all pixels in image(s).
   * `dcmOpacity` {decimal: 0-1} - Opacity level
   * `blnIgnoreTransparent` {boolean} - When set to true, fully transparent pixels opacity won't be overwritten
-* **`swap(objFromColor, objToColor)`** - Swaps one color to another in image(s).  
+
+
+* **`swap(objFromColor, objToColor)`** - Swaps one color to another in image(s).
   * `objFromColor` {object: {r,g,b,a}} - RGBA value to search for. Notice that you don't have to specify all properties
   * `objToColor` {object: {r,g,b,a}} - RGBA value to replace with
+
+
 * **`mirror()`** - Flips image(s) horizontally.
+
+
 * **`rotate(intDegrees)`** - Rotates image(s)  
   * `intDegrees` {integer: 0-360} - The rotation angle in degrees
+
+
 * **`resize(intWidth, intHeight)`** - Resizes image(s).  
   * `intWidth` {number: 0<} - Image new width
   * `intHeight` {number: 0<} - Image new height
+
+
 * **`scale(dcmFactor)`** - Scales image (preserves ratio).  
   * `dcmFactor` {decimal: 0<} - Scaling factor
+
+
 * **`crop(intX, intY, intWidth, intHeight)`** - Crops image(s).  
   * `intX` {integer: 0<} - X coordinate where to start clipping
   * `intY` {integer: 0<} - Y coordinate where to start clipping
@@ -106,7 +124,7 @@ In this section you can find additional methods:
   This methods becomes handy especially when loading images from external source and not using an existing image element.
   ```javascript
     var ig = new Imagenie('../images/myImage.png', 'anotherImage.jpg');
-    
+
     ig.ready(
       function success () {
         console.log('Good to go!');
@@ -116,5 +134,4 @@ In this section you can find additional methods:
         console.log('Oh no! my images are broken!');
       }
     );
-    */
     ```
