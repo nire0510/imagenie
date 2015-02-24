@@ -1,6 +1,6 @@
 {
   "name": "imagenie",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Image manipulation made easy (JS library)",
   "main": "src/imagenie.js",
   "directories": {
