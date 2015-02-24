@@ -40,23 +40,31 @@ images in web pages easily and directly, without having to edit it offline with 
 <h2>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
 
-<p>To get going with Imagenie:
+<p>To get going with Imagenie:<br>
 1. Install via bower:<br>
-<code>bower install imagenie --save</code>
+  <code>bower install imagenie --save</code><br>
 2. Add imagenie.min.js to your web page:<br>
-<code>&lt;script src="bower_components/imagenie/dist/imagenie.min.js"&gt;&lt;/script&gt;</code></p>
+  <code>&lt;script src="bower_components/imagenie/dist/imagenie.min.js"&gt;&lt;/script&gt;</code></p>
 
 <h2>
 <a id="quick-start" class="anchor" href="#quick-start" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quick start</h2>
 
-<p>The first thing to do is to tell Imagenie which images you want to edit or query (you can either select a single element or multiple elements to work on simultaneously).  This can be done by creating a new instance of Imagenie, which its argument could be on of the following:</p>
+<p>The first thing to do is to tell Imagenie which images you want to edit or query. This can be done by creating a new instance of Imagenie, which its argument could be on of the following:</p>
 
 <ul>
-<li>CSS selector:<br>
+<li>A CSS selector:
 <code>var ig = new Imagenie('.someSection img');</code>
 </li>
-<li>Element or a node list:<br>
+<li>An element, HTML collection or a node list:
 <code>var ig = new Imagenie(document.getElementById('myImage'));</code>
+<code>var ig = new Imagenie(document.getElementsByTagName('img'));</code>
+<code>var ig = new Imagenie(document.querySelectorAll('#someSection img'));</code>
+</li>
+<li>Or even a valid image URL, either relative or absolute:
+<code>var ig = new Imagenie('../images/myImage.png');</code>
+<code>var ig = new Imagenie('http://www.my.site.com/images/myImage.png');</code>
+Imagenie can receive as many arguments as you need which, by the way, can also be mix of the type above, for example:
+<code>var ig = new Imagenie('../images/myImage.png', document.images);</code>
 </li>
 </ul>
 
@@ -74,17 +82,17 @@ To keep samples simple, let's assume that we have a variable <code>ig</code> whi
 <p><strong><code>pixel(intX, intY)</code></strong> - Gets image(s) pixel RGBA values in specific location.</p>
 
 <ul>
-<li><code>intX</code> {integer: 0&lt;=} X coordinate</li>
-<li><code>intY</code> {integer: 0&lt;=} Y coordinate</li>
+<li>intX {integer: 0&lt;=} X coordinate</li>
+<li>intY {integer: 0&lt;=} Y coordinate</li>
 </ul>
 
 <p>Returns array of objects, one per image:</p>
 
 <ul>
-<li><code>R</code> {integer: 0-255} - red component value in pixel</li>
-<li><code>G</code> {integer: 0-255} - green component value in pixel</li>
-<li><code>B</code> {integer: 0-255} - blue component value in pixel</li>
-<li><code>A</code> {integer: 0-255} - alpha (transparency) component value in pixel</li>
+<li>R {integer: 0-255} - red component value in pixel</li>
+<li>G {integer: 0-255} - green component value in pixel</li>
+<li>B {integer: 0-255} - blue component value in pixel</li>
+<li>A {integer: 0-255} - alpha (transparency) component value in pixel</li>
 </ul>
 
 <p>Sample:</p>
@@ -96,11 +104,11 @@ To keep samples simple, let's assume that we have a variable <code>ig</code> whi
 Returns array of objects, one per image:</p>
 
 <ul>
-<li><code>src</code> {string} - image path</li>
-<li><code>displayWidth</code> {integer} - image width as seen in web page</li>
-<li><code>displayHeight</code> {integer} - image height as seen in web page</li>
-<li><code>naturalWidth</code> {integer} - original image width</li>
-<li><code>naturalHeight</code> {integer} - original image height</li>
+<li>src {string} - image path</li>
+<li>displayWidth {integer} - image width as seen in web page</li>
+<li>displayHeight {integer} - image height as seen in web page</li>
+<li>naturalWidth {integer} - original image width</li>
+<li>naturalHeight {integer} - original image height</li>
 </ul>
 
 <p>Sample:</p>
@@ -198,6 +206,33 @@ Sample:</p>
 <li>
 <code>intHeight</code> {integer: 0&lt;} - How many pixels to take vertically</li>
 </ul>
+</li>
+</ul>
+
+<h3>
+<a id="miscellaneous" class="anchor" href="#miscellaneous" aria-hidden="true"><span class="octicon octicon-link"></span></a>Miscellaneous</h3>
+
+<p>In this section you can find additional methods:</p>
+
+<ul>
+<li>
+<strong><code>export()</code></strong> - Opens new browser tabs, one per input image, which display the image after applying formatting.</li>
+<li>
+<p><strong><code>ready()</code></strong> - This methods acts like a promise, which expects 2 methods: a success callback in case all input images loaded successfully and an error callback in case at least one of the images failed to load.
+This methods becomes handy especially when loading images from external source and not using an existing image element.</p>
+
+<div class="highlight highlight-javascript"><pre>  <span class="pl-s">var</span> ig <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Imagenie</span>(<span class="pl-s1"><span class="pl-pds">'</span>../images/myImage.png<span class="pl-pds">'</span></span>, <span class="pl-s1"><span class="pl-pds">'</span>anotherImage.jpg<span class="pl-pds">'</span></span>);
+
+  ig.ready(
+    <span class="pl-st">function</span> <span class="pl-en">success</span> () {
+      <span class="pl-en">console</span><span class="pl-s3">.log</span>(<span class="pl-s1"><span class="pl-pds">'</span>Good to go!<span class="pl-pds">'</span></span>);
+      ig.grayscale();
+    },
+    <span class="pl-st">function</span> <span class="pl-en">error</span> () {
+      <span class="pl-en">console</span><span class="pl-s3">.log</span>(<span class="pl-s1"><span class="pl-pds">'</span>Oh no! my images are broken!<span class="pl-pds">'</span></span>);
+    }
+  );
+  <span class="pl-k">*</span>/</pre></div>
 </li>
 </ul>
         </section>
