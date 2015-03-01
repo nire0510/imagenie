@@ -71,7 +71,8 @@ Imagenie can receive as many arguments as you need which, by the way, can also b
 <h2>
 <a id="imagemin-commands" class="anchor" href="#imagemin-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>Imagemin commands</h2>
 
-<p>Imagenie can either query images for some information, such as size or transparency, or to manipulate images: resize it, swap one color with another, add alpha (opacity) channel or even crop it.<br>
+<p>Imagenie can either query images for some information, such as size or transparency, or to manipulate images: resize it, swap one color with another, add alpha (opacity) channel or even crop it.
+Notice that Imagenie is restricted to work with images of the same origin -OR- images which were allowed by server by <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image"><code>Access-Control-Allow-Origin</code></a> header.
 To keep samples simple, let's assume that we have a variable <code>ig</code> which is an instance of the following command <code>new Imagenie(document.getElementById('myImage'));</code></p>
 
 <h3>
@@ -139,14 +140,11 @@ Sample:</p>
 <p>As mentioned above, Imagenie helps you also modify images on-the-fly; Images are immediately affected after execution. Also, notice that all commands in this section are chain-able, which means you can call few of them in a single call. Let's see those commands!</p>
 
 <ul>
+<li><p><strong><code>reset()</code></strong> - Resets image to its original state. Useful when chaining few commands.</p></li>
+<li><p><strong><code>invert()</code></strong> - Inverts image(s) colors.</p></li>
+<li><p><strong><code>grayscale()</code></strong> - Converts image(s) colors to grayscale.</p></li>
 <li>
-<strong><code>reset()</code></strong> - Resets image to its original state. Useful when chaining few commands.</li>
-<li>
-<strong><code>invert()</code></strong> - Inverts image(s) colors.</li>
-<li>
-<strong><code>grayscale()</code></strong> - Converts image(s) colors to grayscale.</li>
-<li>
-<strong><code>alpha(dcmOpacity, blnIgnoreTransparent)</code></strong> - Sets alpha channel to all pixels in image(s).<br>
+<p><strong><code>alpha(dcmOpacity, blnIgnoreTransparent)</code></strong> - Sets alpha channel to all pixels in image(s).</p>
 
 <ul>
 <li>
@@ -156,7 +154,7 @@ Sample:</p>
 </ul>
 </li>
 <li>
-<strong><code>swap(objFromColor, objToColor)</code></strong> - Swaps one color to another in image(s).<br>
+<p><strong><code>swap(objFromColor, objToColor)</code></strong> - Swaps one color to another in image(s).</p>
 
 <ul>
 <li>
@@ -165,10 +163,9 @@ Sample:</p>
 <code>objToColor</code> {object: {r,g,b,a}} - RGBA value to replace with</li>
 </ul>
 </li>
+<li><p><strong><code>mirror()</code></strong> - Flips image(s) horizontally.</p></li>
 <li>
-<strong><code>mirror()</code></strong> - Flips image(s) horizontally.</li>
-<li>
-<strong><code>rotate(intDegrees)</code></strong> - Rotates image(s)<br>
+<p><strong><code>rotate(intDegrees)</code></strong> - Rotates image(s)  </p>
 
 <ul>
 <li>
@@ -176,7 +173,7 @@ Sample:</p>
 </ul>
 </li>
 <li>
-<strong><code>resize(intWidth, intHeight)</code></strong> - Resizes image(s).<br>
+<p><strong><code>resize(intWidth, intHeight)</code></strong> - Resizes image(s).  </p>
 
 <ul>
 <li>
@@ -186,7 +183,7 @@ Sample:</p>
 </ul>
 </li>
 <li>
-<strong><code>scale(dcmFactor)</code></strong> - Scales image (preserves ratio).<br>
+<p><strong><code>scale(dcmFactor)</code></strong> - Scales image (preserves ratio).  </p>
 
 <ul>
 <li>
@@ -194,7 +191,7 @@ Sample:</p>
 </ul>
 </li>
 <li>
-<strong><code>crop(intX, intY, intWidth, intHeight)</code></strong> - Crops image(s).<br>
+<p><strong><code>crop(intX, intY, intWidth, intHeight)</code></strong> - Crops image(s).  </p>
 
 <ul>
 <li>
@@ -219,7 +216,8 @@ Sample:</p>
 <strong><code>export()</code></strong> - Opens new browser tabs, one per input image, which display the image after applying formatting.</li>
 <li>
 <p><strong><code>ready()</code></strong> - This methods acts like a promise, which expects 2 methods: a success callback in case all input images loaded successfully and an error callback in case at least one of the images failed to load.
-This methods becomes handy especially when loading images from external source and not using an existing image element.</p>
+This methods becomes handy especially when loading images from external source and not using an existing image element.
+You can also use it just as an image preloader!</p>
 
 <div class="highlight highlight-javascript"><pre>  <span class="pl-s">var</span> ig <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Imagenie</span>(<span class="pl-s1"><span class="pl-pds">'</span>../images/myImage.png<span class="pl-pds">'</span></span>, <span class="pl-s1"><span class="pl-pds">'</span>anotherImage.jpg<span class="pl-pds">'</span></span>);
 
@@ -229,10 +227,9 @@ This methods becomes handy especially when loading images from external source a
       ig.grayscale();
     },
     <span class="pl-st">function</span> <span class="pl-en">error</span> () {
-      <span class="pl-en">console</span><span class="pl-s3">.log</span>(<span class="pl-s1"><span class="pl-pds">'</span>Oh no! my images are broken!<span class="pl-pds">'</span></span>);
+      <span class="pl-en">console</span><span class="pl-s3">.log</span>(<span class="pl-s1"><span class="pl-pds">'</span>Oh no! At least one of my images is broken!<span class="pl-pds">'</span></span>);
     }
-  );
-  <span class="pl-k">*</span>/</pre></div>
+  );</pre></div>
 </li>
 </ul>
         </section>
