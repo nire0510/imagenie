@@ -25,7 +25,8 @@ Imagenie can receive as many arguments as you need which, by the way, can also b
 `var ig = new Imagenie('../images/myImage.png', document.images);`
 
 ## Imagemin commands
-Imagenie can either query images for some information, such as size or transparency, or to manipulate images: resize it, swap one color with another, add alpha (opacity) channel or even crop it.  
+Imagenie can either query images for some information, such as size or transparency, or to manipulate images: resize it, swap one color with another, add alpha (opacity) channel or even crop it.
+Notice that Imagenie is restricted to work with images of the same origin -OR- images which were allowed by server by [`Access-Control-Allow-Origin`](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image) header.
 To keep samples simple, let's assume that we have a variable `ig` which is an instance of the following command `new Imagenie(document.getElementById('myImage'));`
 
 ### Query images
@@ -122,6 +123,7 @@ In this section you can find additional methods:
 * **`export()`** - Opens new browser tabs, one per input image, which display the image after applying formatting.
 * **`ready()`** - This methods acts like a promise, which expects 2 methods: a success callback in case all input images loaded successfully and an error callback in case at least one of the images failed to load.
   This methods becomes handy especially when loading images from external source and not using an existing image element.
+  You can also use it just as an image preloader!
   ```javascript
     var ig = new Imagenie('../images/myImage.png', 'anotherImage.jpg');
 
@@ -131,7 +133,7 @@ In this section you can find additional methods:
         ig.grayscale();
       },
       function error () {
-        console.log('Oh no! my images are broken!');
+        console.log('Oh no! At least one of my images is broken!');
       }
     );
     ```

@@ -15,7 +15,7 @@
   function () {
     'use strict';
 
-    var _images = [];
+    var _images;
 
     /**
      * Helper object
@@ -25,7 +25,7 @@
       /**
        * Logs messages to console
        */
-      log: function() {
+      log: function () {
         if (Config.debug) {
           console.log.apply(console, arguments);
         }
@@ -66,29 +66,29 @@
 
     var Canvas = {
       _init: function () {
-        Canvas.canvas = document.createElement('canvas');
-        Canvas.context = Canvas.canvas.getContext('2d')
+        this.canvas = document.createElement('canvas');
+        this.context = this.canvas.getContext('2d')
       },
       reset: function (intWidth, intHeight) {
-        Canvas.canvas.height = intHeight;
-        Canvas.canvas.width = intWidth;
-        Canvas.context.clearRect (0 , 0, intWidth, intHeight);
+        this.canvas.height = intHeight;
+        this.canvas.width = intWidth;
+        this.context.clearRect(0, 0, intWidth, intHeight);
       },
       drawImage: function (objImage, intX, intY, intWidth, intHeight) {
-        Canvas.reset(intWidth, intHeight);
-        Canvas.context.drawImage(objImage, intX, intY, intWidth, intHeight);
+        this.reset(intWidth, intHeight);
+        this.context.drawImage(objImage, intX, intY, intWidth, intHeight);
       },
       cropImage: function (objImage, intSX, intSY, intSWidth, intSHeight, intDX, intDY, intDWidth, intDHeight) {
-        Canvas.clear(intSWidth, intSHeight);
-        Canvas.context.drawImage(objImage, intSX, intSY, intSWidth, intSHeight, intDX, intDY, intDWidth, intDHeight);
+        this.clear(intSWidth, intSHeight);
+        this.context.drawImage(objImage, intSX, intSY, intSWidth, intSHeight, intDX, intDY, intDWidth, intDHeight);
       },
       getImageData: function (intX, intY, intWidth, intHeight) {
-        return Canvas.context.getImageData(intX, intY, intWidth, intHeight);
+        return this.context.getImageData(intX, intY, intWidth, intHeight);
       }
     };
     Canvas._init();
 
-    function Imagenie () {
+    function Imagenie() {
       var that = this,
         args = arguments;
 
@@ -98,7 +98,7 @@
       /**
        * Initialization function
        */
-      (function init () {
+      (function init() {
         [].forEach.call(args, function (input) {
           // Check if images argument is a string ot an array:
           if (typeof input === 'string') {
@@ -111,12 +111,11 @@
             else if (document.querySelectorAll(input).length > 0) {
               Helper.log('Image element selector');
 
-              [].forEach.call(document.querySelectorAll(input), function(elem) {
+              [].forEach.call(document.querySelectorAll(input), function (elem) {
                 if (elem.nodeName === 'IMG') {
                   _images.push({
                     elem: elem,
                     src: elem.src,
-                    cor: elem.src.indexOf(document.location.origin) < 0 && elem.src.indexOf('data:') < 0,
                     source: _getDataUrl(elem),
                     complete: elem.complete
                   });
@@ -127,12 +126,11 @@
           // Check if argument is an array (could be an array of one of the two options above)
           else if (input.constructor.name === 'NodeList' || input.constructor.name === 'HTMLCollection') {
             Helper.log('Image nodes list');
-            [].forEach.call(input, function(elem) {
+            [].forEach.call(input, function (elem) {
               if (elem.nodeName === 'IMG') {
                 _images.push({
                   elem: elem,
                   source: _getDataUrl(elem),
-                  cor: elem.src.indexOf(document.location.origin) < 0 && elem.src.indexOf('data:') < 0,
                   src: elem.src,
                   complete: elem.complete
                 });
@@ -155,7 +153,6 @@
         obj = {
           elem: img,
           source: null,
-          cor: strURL.indexOf(document.location.origin) < 0 && strURL.indexOf('data:') < 0,
           src: strURL,
           complete: false
         };
@@ -203,7 +200,7 @@
      * @returns {[number]} Array of pixels. Each pixel is represented by 4 values: RGBA
      * @private
      */
-    function _getImageDataArray (elmImage) {
+    function _getImageDataArray(elmImage) {
       // Draw image on canvas:
       Canvas.drawImage(elmImage, 0, 0, elmImage.width, elmImage.height);
       // Get image data:
@@ -216,8 +213,8 @@
      * @returns {string} Base64 representation of image data
      * @private
      */
-    function _getDataUrl (objImage) {
-      if (objImage.hasOwnProperty('src') && objImage.cor === false) {
+    function _getDataUrl(objImage) {
+      if (objImage.hasOwnProperty('src')) {
         // Draw image on canvas:
         Canvas.drawImage(objImage, 0, 0, objImage.width, objImage.height);
         // Get image data:
@@ -230,26 +227,24 @@
      * @param {function} fncManipulation Manipulation function
      * @private
      */
-    function _manipulatePixel (fncManipulation) {
+    function _manipulatePixel(fncManipulation) {
       _images.forEach(function (objImage) {
-        if (objImage.cor === false) {
-          var objImageData,
-            data;
+        var objImageData,
+          data;
 
-          // Draw image on canvas:
-          Canvas.drawImage(objImage.elem, 0, 0, objImage.elem.width, objImage.elem.height);
-          // Get image data:
-          objImageData = Canvas.getImageData(0, 0, objImage.elem.width, objImage.elem.height);
-          data = objImageData.data;
-          // Subtract from each pixel's RGB component 255 (inversion):
-          for (var i = 0, len = data.length; i < len; i += 4) {
-            fncManipulation(data, i);
-          }
-          // Update canvas:
-          Canvas.context.putImageData(objImageData, 0, 0);
-          // Update image:
-          objImage.elem.src = Canvas.canvas.toDataURL();
+        // Draw image on canvas:
+        Canvas.drawImage(objImage.elem, 0, 0, objImage.elem.width, objImage.elem.height);
+        // Get image data:
+        objImageData = Canvas.getImageData(0, 0, objImage.elem.width, objImage.elem.height);
+        data = objImageData.data;
+        // Subtract from each pixel's RGB component 255 (inversion):
+        for (var i = 0, len = data.length; i < len; i += 4) {
+          fncManipulation(data, i);
         }
+        // Update canvas:
+        Canvas.context.putImageData(objImageData, 0, 0);
+        // Update image:
+        objImage.elem.src = Canvas.canvas.toDataURL();
       });
     };
 
@@ -296,18 +291,13 @@
     Imagenie.prototype.pixel = function (intX, intY) {
       if (intX >= 0 && intY >= 0) {
         return _images.map(function (objImage) {
-          if (objImage.cor === false) {
-            var arrData = _getImageDataArray(objImage.elem);
+          var arrData = _getImageDataArray(objImage.elem);
 
-            return {
-              R: arrData[((objImage.elem.width * intY) + intX) * 4],
-              G: arrData[((objImage.elem.width * intY) + intX) * 4 + 1],
-              B: arrData[((objImage.elem.width * intY) + intX) * 4 + 2],
-              A: arrData[((objImage.elem.width * intY) + intX) * 4 + 3]
-            }
-          }
-          else {
-            return null;
+          return {
+            R: arrData[((objImage.elem.width * intY) + intX) * 4],
+            G: arrData[((objImage.elem.width * intY) + intX) * 4 + 1],
+            B: arrData[((objImage.elem.width * intY) + intX) * 4 + 2],
+            A: arrData[((objImage.elem.width * intY) + intX) * 4 + 3]
           }
         });
       }
@@ -319,22 +309,17 @@
      */
     Imagenie.prototype.transparency = function () {
       return _images.map(function (objImage) {
-        if (objImage.cor === false) {
-          var arrData = _getImageDataArray(objImage);
+        var arrData = _getImageDataArray(objImage);
 
-          for (var y = 0; y < objImage.elem.height; y++) {
-            for (var x = 0; x < objImage.elem.width; x++) {
-              if (arrData[((objImage.elem.width * y) + x) * 4 + 3] < 255) {
-                return true;
-              }
+        for (var y = 0; y < objImage.elem.height; y++) {
+          for (var x = 0; x < objImage.elem.width; x++) {
+            if (arrData[((objImage.elem.width * y) + x) * 4 + 3] < 255) {
+              return true;
             }
           }
+        }
 
-          return false;
-        }
-        else {
-          return null;
-        }
+        return false;
       });
     };
 
@@ -349,12 +334,10 @@
     Imagenie.prototype.crop = function (intX, intY, intWidth, intHeight) {
       if (intX >= 0 && intY >= 0 && intWidth > 0 && intHeight > 0) {
         _images.forEach(function (objImage) {
-          if (objImage.cor === false) {
-            // Draw image on canvas:
-            Canvas.cropImage(objImage.elem, intX, intY, intWidth, intHeight, 0, 0, intWidth, intHeight);
-            // Update image:
-            objImage.elem.src = Canvas.canvas.toDataURL();
-          }
+          // Draw image on canvas:
+          Canvas.cropImage(objImage.elem, intX, intY, intWidth, intHeight, 0, 0, intWidth, intHeight);
+          // Update image:
+          objImage.elem.src = Canvas.canvas.toDataURL();
         });
       }
 
@@ -387,12 +370,10 @@
     Imagenie.prototype.scale = function (dcmFactor) {
       if (dcmFactor > 0) {
         _images.forEach(function (objImage) {
-          if (objImage.cor === false) {
-            // Draw image on canvas:
-            Canvas.drawImage(objImage.elem, 0, 0, objImage.elem.width * Math.max(0, dcmFactor), objImage.elem.height * Math.max(0, dcmFactor));
-            // Update image:
-            objImage.elem.src = Canvas.canvas.toDataURL();
-          }
+          // Draw image on canvas:
+          Canvas.drawImage(objImage.elem, 0, 0, objImage.elem.width * Math.max(0, dcmFactor), objImage.elem.height * Math.max(0, dcmFactor));
+          // Update image:
+          objImage.elem.src = Canvas.canvas.toDataURL();
         });
       }
 
@@ -433,19 +414,17 @@
      */
     Imagenie.prototype.mirror = function () {
       _images.forEach(function (objImage) {
-        if (objImage.cor === false) {
-          Canvas.reset(objImage.elem.width, objImage.elem.height);
-          Canvas.context.save();
-          Canvas.context.translate(objImage.elem.width / 2, objImage.elem.height / 2);
-          // Flip canvas horizontally:
-          Canvas.context.scale(-1, 1);
-          // Draw image on canvas:
-          Canvas.context.drawImage(objImage.elem, -objImage.elem.width / 2, -objImage.elem.height / 2, objImage.elem.width, objImage.elem.height);
-          Canvas.context.restore();
+        Canvas.reset(objImage.elem.width, objImage.elem.height);
+        Canvas.context.save();
+        Canvas.context.translate(objImage.elem.width / 2, objImage.elem.height / 2);
+        // Flip canvas horizontally:
+        Canvas.context.scale(-1, 1);
+        // Draw image on canvas:
+        Canvas.context.drawImage(objImage.elem, -objImage.elem.width / 2, -objImage.elem.height / 2, objImage.elem.width, objImage.elem.height);
+        Canvas.context.restore();
 
-          // Update image:
-          objImage.elem.src = Canvas.canvas.toDataURL();
-        }
+        // Update image:
+        objImage.elem.src = Canvas.canvas.toDataURL();
       });
 
       return this;
@@ -488,12 +467,10 @@
     Imagenie.prototype.resize = function (intWidth, intHeight) {
       if (intWidth >= 0 && intHeight >= 0) {
         _images.forEach(function (objImage) {
-          if (objImage.cor === false) {
-            // Draw image on canvas:
-            Canvas.drawImage(objImage.elem, 0, 0, Math.max(0, intWidth), Math.max(0, intHeight));
-            // Update image:
-            objImage.elem.src = Canvas.canvas.toDataURL();
-          }
+          // Draw image on canvas:
+          Canvas.drawImage(objImage.elem, 0, 0, Math.max(0, intWidth), Math.max(0, intHeight));
+          // Update image:
+          objImage.elem.src = Canvas.canvas.toDataURL();
         });
       }
 
@@ -508,19 +485,17 @@
     Imagenie.prototype.rotate = function (intDegrees) {
       if (intDegrees >= 0) {
         _images.forEach(function (objImage) {
-          if (objImage.cor === false) {
-            Canvas.reset(objImage.elem.width, objImage.elem.height);
-            Canvas.context.save();
-            Canvas.context.translate(objImage.elem.width / 2, objImage.elem.height / 2);
-            // Rotate canvas:
-            Canvas.context.rotate((intDegrees % 360) * Math.PI / 180);
-            // Draw image on canvas:
-            Canvas.context.drawImage(objImage.elem, -objImage.elem.width / 2, -objImage.elem.height / 2, objImage.elem.width, objImage.elem.height);
-            Canvas.context.restore();
+          Canvas.reset(objImage.elem.width, objImage.elem.height);
+          Canvas.context.save();
+          Canvas.context.translate(objImage.elem.width / 2, objImage.elem.height / 2);
+          // Rotate canvas:
+          Canvas.context.rotate((intDegrees % 360) * Math.PI / 180);
+          // Draw image on canvas:
+          Canvas.context.drawImage(objImage.elem, -objImage.elem.width / 2, -objImage.elem.height / 2, objImage.elem.width, objImage.elem.height);
+          Canvas.context.restore();
 
-            // Update image:
-            objImage.elem.src = Canvas.canvas.toDataURL();
-          }
+          // Update image:
+          objImage.elem.src = Canvas.canvas.toDataURL();
         });
       }
 
